@@ -18,11 +18,13 @@
 /out/
 
 # production
+.env
 /build
 
 # misc
 .DS_Store
 *.pem
+.idx/.data/
 
 # debug
 npm-debug.log*

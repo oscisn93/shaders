@@ -25,26 +25,29 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { SudokuGameGrid, SudokuCellState, SudokuGridHistory } from '@/types';
+import { number } from 'zod';
+
+
 
 const SUDOKU_GRID_STORAGE_KEY = 'sudokuGrid';
 const SUDOKU_INITIAL_GRID_STORAGE_KEY = 'sudokuInitialGrid';
 const SUDOKU_HISTORY_STORAGE_KEY = 'sudokuHistory';
+const SUDOKU_DEFAULT_DIFFICULTY = 'Easy';
+const SUDOKU_DEFAULT_TIME = 20;
 
 const SudokuPage: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const difficulty = searchParams.get('difficulty') || 'Medium';
-    const timeAvailable = searchParams.get('time') || 30;
+    const difficulty = searchParams.get('difficulty') || SUDOKU_DEFAULT_DIFFICULTY;
+    const timeAvailable = searchParams.get('time') || SUDOKU_DEFAULT_TIME;
 
-    const [grid, setGrid] = useState<number[][]>([]);
-    const [initialGrid, setInitialGrid] = useState<number[][]>([]);
-    const [selectedCell, setSelectedCell] = useState<{ row: number | null; col: number | null }>({
-        row: null,
-        col: null,
-    });
+    const [grid, setGrid] = useState<SudokuGameGrid>([]);
+    const [initialGrid, setInitialGrid] = useState<SudokuGameGrid>([]);
+    const [selectedCell, setSelectedCell] = useState<SudokuCellState | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
-    const [history, setHistory] = useState<number[][][]>([]);
+    const [history, setHistory] = useState<SudokuGridHistory>([]);
     const sudokuGridRef = useRef<HTMLDivElement>(null);
 
     const [time, setTime] = useState(0);
@@ -67,7 +70,7 @@ const SudokuPage: React.FC = () => {
     }, [isRunning]);
 
 
-    const isValidMove = useCallback((grid: number[][], row: number, col: number, number: number): boolean => {
+    const isValidMove = useCallback((grid: SudokuGameGrid, row: number, col: number, number: number): boolean => {
         // Check row
         for (let i = 0; i < 9; i++) {
             if (i !== col && grid[row][i] === number) {
@@ -75,7 +78,6 @@ const SudokuPage: React.FC = () => {
             }
         }
 
-        // Check column
         for (let i = 0; i < 9; i++) {
             if (i !== row && grid[i][col] === number) {
                 return false;
@@ -98,13 +100,19 @@ const SudokuPage: React.FC = () => {
     }, []);
 
     const handleNumberSelect = useCallback((number: number) => {
-        if (selectedCell.row !== null && selectedCell.col !== null) {
-            if (initialGrid[selectedCell.row][selectedCell.col] === null) {
-                const newGrid = grid.map((rowArray, rowIndex) =>
-                    rowIndex === selectedCell.row ? rowArray.map((cellValue, colIndex) =>
-                        colIndex === selectedCell.col ? number : cellValue
-                    ) : rowArray
-                );
+        if (selectedCell) {
+            if (initialGrid[selectedCell.row][selectedCell.col]) {
+                const newGrid = grid.map((row, y) => {
+                    for (let col = 0; col < row.length; col++) {
+                        if (selectedCell.row === y && selectedCell.col === col) {
+                            let cp = [...row];
+                            cp[col] = number;
+                            return cp;
+                        }
+                    }
+                    return row;
+                });
+                
 
                 if (isValidMove(newGrid, selectedCell.row, selectedCell.col, number)) {
                     setHistory(prevHistory => {
@@ -142,7 +150,7 @@ const SudokuPage: React.FC = () => {
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (selectedCell.row !== null && selectedCell.col !== null && sudokuGridRef.current?.contains(document.activeElement)) {
+            if (selectedCell.row && selectedCell.col && sudokuGridRef.current?.contains(document.activeElement)) {
                 const number = parseInt(event.key);
                 if (!isNaN(number) && number >= 1 && number <= 9) {
                     handleNumberSelect(number);
@@ -155,7 +163,7 @@ const SudokuPage: React.FC = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [selectedCell, handleNumberSelect, sudokuGridRef]);
+    }, []);
 
     const loadNewPuzzle = useCallback(async (difficultyLevel: string) => {
         setIsLoading(true);
@@ -426,72 +434,12 @@ const SudokuPage: React.FC = () => {
       setIsSolved(false);
       handleNewPuzzle();
     };
-
-
-    return (
-        
-            
-                
-                    
-                   Solve a new puzzle each day!
-                    
-                    
-                        
-                            
-                            {isLoading ? (
-                                <Skeleton className="w-full aspect-square rounded-md" />
-                            ) : (
-                                <SudokuGrid grid={grid} selectedCell={selectedCell} onSelectCell={handleCellSelect} initialGrid={initialGrid} />
-                            )}
-                        
-                        
-                            {isLoading ? (
-                                <Skeleton className="w-full h-48 rounded-md" />
-                            ) : (
-                                <SudokuControls onNumberSelect={handleNumberSelect} onGetSuggestion={handleGetSuggestion} onUndo={handleUndo}/>
-                            )}
-                            
-                                
-                                    
+    return (isLoading ? <Skeleton className="w-full aspect-square rounded-md" />: <SudokuGrid grid={grid} selectedCell={selectedCell} onSelectCell={handleCellSelect} initialGrid={initialGrid} />)
+        && (isLoading ? <Skeleton className="w-full h-48 rounded-md" /> : <SudokuControls onNumberSelect={handleNumberSelect} onGetSuggestion={handleGetSuggestion} onUndo={handleUndo}/>)                                    
                                         {isLoading && <Skeleton className="h-8 w-24 rounded-md" />}
-                                        New Puzzle
-                                    
-                                    
                                         {isLoading && <Skeleton className="h-8 w-24 rounded-md" />}
-                                        Random
-                                    
-                                
-                                
                                   {formatTime(time)}
-                                
-                            
-                           
-                                
-                                    
-                                        
-                                            
-                                        
-                                    
-                                
-                                
-                                    
-                                        
-                                             Reset
-                                        
-                                    
-                                
-                            
-                        
-                    
-                
-                 
-                    
-                    
                       {Array.from({ length: 9 }, (_, i) => i + 1).map((number) => (
-                        
-                          
-                            
-                              
                               <Checkbox
                                 checked={completedNumbers.includes(number)}
                                 disabled
@@ -501,25 +449,7 @@ const SudokuPage: React.FC = () => {
                               {number}
                             
                             {completedNumbers.includes(number) && <X className="h-4 w-4 text-green-500" />}
-                          
-                        
                       ))}
-                    
-                
-            
-          
-            
-              
-                Congratulations!
-                You've solved the Sudoku! Want to play again?
-              
-              
-                No
-                Yes
-              
-            
-          
-        
     );
 };
 

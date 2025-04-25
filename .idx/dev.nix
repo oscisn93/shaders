@@ -5,6 +5,7 @@
   channel = "stable-24.11"; # or "unstable"
   # Use https://search.nixos.org/packages to find packages
   packages = [
+    pkgs.mongodb
     pkgs.nodejs_20
   ];
   # Sets environment variables in the workspace
@@ -12,10 +13,11 @@
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
-      # "vscodevim.vim"
+      "vscodevim.vim"
     ];
     workspace = {
       onCreate = {
+        npm-test = "npm run test";
         default.openFiles = [
           "src/app/page.tsx"
         ];
@@ -30,6 +32,17 @@
           manager = "web";
         };
       };
+    };  
+  };
+  services = {
+    mongodb = {
+      enable = true;
+      package = pkgs.mongodb;
+      port = 27017;
+    };
+    redis = {
+      enable = true;
+      port = 5703;
     };
   };
 }

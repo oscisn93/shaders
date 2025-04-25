@@ -1,3 +1,6 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1827123473.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:81481651.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1188887133.
 /**
  * Represents a Sudoku puzzle.
  */
@@ -9,7 +12,7 @@ id: string;
   /**
    * A 2D array representing the Sudoku grid.  Use null for empty cells.
    */
-grid: (number | null)[][];
+grid: number[][];
   /**
    * The difficulty level of the Sudoku puzzle.
    */
@@ -24,26 +27,26 @@ export async function getRandomSudokuPuzzle(): Promise<SudokuPuzzle> {
   // TODO: Implement this by calling an API.
     const grids = [
         [
-            [5, 3, null, null, 7, null, null, null, null],
-            [6, null, null, 1, 9, 5, null, null, null],
-            [null, 9, 8, null, null, null, null, 6, null],
-            [8, null, null, null, 6, null, null, null, 3],
-            [4, null, null, 8, null, 3, null, null, 1],
-            [7, null, null, null, 2, null, null, null, 6],
-            [null, 6, null, null, null, null, 2, 8, null],
-            [null, null, null, 4, 1, 9, null, null, 5],
-            [null, null, null, null, 8, null, null, 7, 9],
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9],
         ],
         [
-            [null, null, 9, 7, null, null, 4, null, null],
-            [null, 2, null, 1, null, 8, null, 5, null],
-            [null, null, null, null, 4, null, null, null, 2],
-            [null, null, null, null, null, null, null, 9, 3],
-            [null, null, null, 4, null, 3, null, null, null],
-            [1, 4, null, null, null, null, null, null, null],
-            [9, null, null, null, 2, null, null, null, null],
-            [null, 8, null, 5, null, 9, null, 1, null],
-            [null, null, 6, null, null, 5, 7, null, null],
+            [0, 0, 9, 7, 0, 0, 4, 0, 0],
+            [0, 2, 0, 1, 0, 8, 0, 5, 0],
+            [0, 0, 0, 0, 4, 0, 0, 0, 2],
+            [0, 0, 0, 0, 0, 0, 0, 9, 3],
+            [0, 0, 0, 4, 0, 3, 0, 0, 0],
+            [1, 4, 0, 0, 0, 0, 0, 0, 0],
+            [9, 0, 0, 0, 2, 0, 0, 0, 0],
+            [0, 8, 0, 5, 0, 9, 0, 1, 0],
+            [0, 0, 6, 0, 0, 5, 7, 0, 0],
         ],
         // Add more Sudoku grids here for variety
     ];
@@ -68,15 +71,15 @@ export async function getSudokuPuzzleById(id: string): Promise<SudokuPuzzle | nu
   return {
     id: id,
     grid: [
-      [5, 3, null, null, 7, null, null, null, null],
-      [6, null, null, 1, 9, 5, null, null, null],
-      [null, 9, 8, null, null, null, null, 6, null],
-      [8, null, null, null, 6, null, null, null, 3],
-      [4, null, null, 8, null, 3, null, null, 1],
-      [7, null, null, null, 2, null, null, null, 6],
-      [null, 6, null, null, null, null, 2, 8, null],
-      [null, null, null, 4, 1, 9, null, null, 5],
-      [null, null, null, null, 8, null, null, 7, 9],
+      [5, 3, 0, 0, 7, 0, 0, 0, 0],
+      [6, 0, 0, 1, 9, 5, 0, 0, 0],
+      [0, 9, 8, 0, 0, 0, 0, 6, 0],
+      [8, 0, 0, 0, 6, 0, 0, 0, 3],
+      [4, 0, 0, 8, 0, 3, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 0, 6],
+      [0, 6, 0, 0, 0, 0, 2, 8, 0],
+      [0, 0, 0, 4, 1, 9, 0, 0, 5],
+      [0, 0, 0, 0, 8, 0, 0, 7, 9],
     ],
     difficulty: 'Medium',
   };
@@ -94,15 +97,15 @@ export async function getSudokuPuzzleByDifficulty(difficulty: string): Promise<S
   return {
     id: '1',
     grid: [
-      [5, 3, null, null, 7, null, null, null, null],
-      [6, null, null, 1, 9, 5, null, null, null],
-      [null, 9, 8, null, null, null, null, 6, null],
-      [8, null, null, null, 6, null, null, null, 3],
-      [4, null, null, 8, null, 3, null, null, 1],
-      [7, null, null, null, 2, null, null, null, 6],
-      [null, 6, null, null, null, null, 2, 8, null],
-      [null, null, null, 4, 1, 9, null, null, 5],
-      [null, null, null, null, 8, null, null, 7, 9],
+      [5, 3, 0, 0, 7, 0, 0, 0, 0],
+      [6, 0, 0, 1, 9, 5, 0, 0, 0],
+      [0, 9, 8, 0, 0, 0, 0, 6, 0],
+      [8, 0, 0, 0, 6, 0, 0, 0, 3],
+      [4, 0, 0, 8, 0, 3, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 0, 6],
+      [0, 6, 0, 0, 0, 0, 2, 8, 0],
+      [0, 0, 0, 4, 1, 9, 0, 0, 5],
+      [0, 0, 0, 0, 8, 0, 0, 7, 9],
     ],
     difficulty: difficulty,
   };

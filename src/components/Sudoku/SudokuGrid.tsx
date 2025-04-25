@@ -1,20 +1,20 @@
 "use client";
 
+import { SudokuCellState } from '@/types';
 import React from 'react';
 
 interface SudokuGridProps {
-    grid: (number | null)[][];
+    grid: number[][];
     initialGrid: (number | null)[][];
-    selectedCell: { row: number | null; col: number | null };
+    selectedCell: SudokuCellState | null;
     onSelectCell: (row: number, col: number) => void;
 }
 
 const SudokuGrid: React.FC<SudokuGridProps> = ({ grid, initialGrid, selectedCell, onSelectCell }) => {
     const isCellHighlighted = (row: number, col: number) => {
-        if (selectedCell.row === null || selectedCell.col === null) {
+        if (!selectedCell) {
             return false;
         }
-
         return (
             row === selectedCell.row ||
             col === selectedCell.col ||
@@ -24,7 +24,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ grid, initialGrid, selectedCell
     };
 
     const isInitialValue = (row: number, col: number): boolean => {
-        return initialGrid[row][col] !== null;
+        return !initialGrid[row][col];
     };
 
     const getRandomColor = () => {
@@ -52,7 +52,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({ grid, initialGrid, selectedCell
                             cursor-pointer
                             transition-colors duration-200
                             hover:bg-accent/30
-                            ${selectedCell.row === rowIndex && selectedCell.col === colIndex ? 'bg-accent/50' : ''}
+                            ${selectedCell && (selectedCell.row === rowIndex && selectedCell.col === colIndex) ? 'bg-accent/50' : ''}
                             ${isInitialValue(rowIndex, colIndex) ? 'text-foreground' : ''}
                         `}
                         onClick={() => onSelectCell(rowIndex, colIndex)}
